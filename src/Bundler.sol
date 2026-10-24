@@ -25,6 +25,12 @@ error AssetNotInPool();
 /// @dev Thrown when the provided exact amount is zero
 error ExactAmountZero();
 
+/// @dev Thrown by a simulation step to hand back its result; the revert undoes everything the step did
+error SimulationResult(bytes result);
+
+/// @dev Thrown when a simulation step is called by anyone but this contract
+error OnlySelf();
+
 /**
  * @author Whetstone
  * @custom:security-contact security@whetstone.cc
@@ -61,6 +67,11 @@ contract Bundler {
         v4Quoter = IV4Quoter(v4Quoter_);
     }
 
+    /*
+     * Simulations create the asset and quote the buy inside a self-call that always reverts, so nothing they do
+     * persists, even when they are sent as a transaction instead of an eth_call (audit ATH-09).
+     */
+
     /**
      * @notice Simulates a bundle operation with an exact output amount
      * @param createData Creation data to pass to the Airlock contract
@@ -71,11 +82,7 @@ contract Bundler {
         CreateParams calldata createData,
         IQuoterV2.QuoteExactOutputSingleParams calldata params
     ) external returns (uint256 amountIn) {
-        (address asset,,,,) = airlock.create(createData);
-        if (asset != params.tokenOut) {
-            revert InvalidOutputToken();
-        }
-        (amountIn,,,) = quoter.quoteExactOutputSingle(params);
+        amountIn = abi.decode(_simulate(abi.encodeCall(this.simulationStepExactOut, (createData, params))), (uint256));
     }
 
     /**
@@ -88,11 +95,7 @@ contract Bundler {
         CreateParams calldata createData,
         IQuoterV2.QuoteExactInputSingleParams calldata params
     ) external returns (uint256 amountOut) {
-        (address asset,,,,) = airlock.create(createData);
-        if (asset != params.tokenOut) {
-            revert InvalidOutputToken();
-        }
-        (amountOut,,,) = quoter.quoteExactInputSingle(params);
+        amountOut = abi.decode(_simulate(abi.encodeCall(this.simulationStepExactIn, (createData, params))), (uint256));
     }
 
     /**
@@ -108,15 +111,9 @@ contract Bundler {
         uint128 exactAmountOut,
         bytes calldata hookData
     ) external returns (address asset, PoolKey memory poolKey, uint256 amountIn, uint256 gasEstimate) {
-        bool zeroForOne;
-        (asset, poolKey, zeroForOne) = _prepareMulticurveQuote(createData);
-
-        uint128 amount = _resolveExactOutAmount(createData, exactAmountOut);
-
-        (amountIn, gasEstimate) = v4Quoter.quoteExactOutputSingle(
-            IV4Quoter.QuoteExactSingleParams({
-                poolKey: poolKey, zeroForOne: zeroForOne, exactAmount: amount, hookData: hookData
-            })
+        (asset, poolKey, amountIn, gasEstimate) = abi.decode(
+            _simulate(abi.encodeCall(this.simulationStepMulticurveExactOut, (createData, exactAmountOut, hookData))),
+            (address, PoolKey, uint256, uint256)
         );
     }
 
@@ -126,15 +123,90 @@ contract Bundler {
         bytes calldata hookData
     ) external returns (address asset, PoolKey memory poolKey, uint256 amountOut, uint256 gasEstimate) {
         if (exactAmountIn == 0) revert ExactAmountZero();
+        (asset, poolKey, amountOut, gasEstimate) = abi.decode(
+            _simulate(abi.encodeCall(this.simulationStepMulticurveExactIn, (createData, exactAmountIn, hookData))),
+            (address, PoolKey, uint256, uint256)
+        );
+    }
 
-        bool zeroForOne;
-        (asset, poolKey, zeroForOne) = _prepareMulticurveQuote(createData);
+    /// @dev Simulation step of simulateBundleExactOut; only this contract may call it, and it always reverts
+    function simulationStepExactOut(
+        CreateParams calldata createData,
+        IQuoterV2.QuoteExactOutputSingleParams calldata params
+    ) external {
+        if (msg.sender != address(this)) revert OnlySelf();
+        (address asset,,,,) = airlock.create(createData);
+        if (asset != params.tokenOut) {
+            revert InvalidOutputToken();
+        }
+        (uint256 amountIn,,,) = quoter.quoteExactOutputSingle(params);
+        revert SimulationResult(abi.encode(amountIn));
+    }
 
-        (amountOut, gasEstimate) = v4Quoter.quoteExactInputSingle(
+    /// @dev Simulation step of simulateBundleExactIn; only this contract may call it, and it always reverts
+    function simulationStepExactIn(
+        CreateParams calldata createData,
+        IQuoterV2.QuoteExactInputSingleParams calldata params
+    ) external {
+        if (msg.sender != address(this)) revert OnlySelf();
+        (address asset,,,,) = airlock.create(createData);
+        if (asset != params.tokenOut) {
+            revert InvalidOutputToken();
+        }
+        (uint256 amountOut,,,) = quoter.quoteExactInputSingle(params);
+        revert SimulationResult(abi.encode(amountOut));
+    }
+
+    /// @dev Simulation step of simulateMulticurveBundleExactOut; only this contract may call it, and it always reverts
+    function simulationStepMulticurveExactOut(
+        CreateParams calldata createData,
+        uint128 exactAmountOut,
+        bytes calldata hookData
+    ) external {
+        if (msg.sender != address(this)) revert OnlySelf();
+        (address asset, PoolKey memory poolKey, bool zeroForOne) = _prepareMulticurveQuote(createData);
+
+        uint128 amount = _resolveExactOutAmount(createData, exactAmountOut);
+
+        (uint256 amountIn, uint256 gasEstimate) = v4Quoter.quoteExactOutputSingle(
+            IV4Quoter.QuoteExactSingleParams({
+                poolKey: poolKey, zeroForOne: zeroForOne, exactAmount: amount, hookData: hookData
+            })
+        );
+        revert SimulationResult(abi.encode(asset, poolKey, amountIn, gasEstimate));
+    }
+
+    /// @dev Simulation step of simulateMulticurveBundleExactIn; only this contract may call it, and it always reverts
+    function simulationStepMulticurveExactIn(
+        CreateParams calldata createData,
+        uint128 exactAmountIn,
+        bytes calldata hookData
+    ) external {
+        if (msg.sender != address(this)) revert OnlySelf();
+        (address asset, PoolKey memory poolKey, bool zeroForOne) = _prepareMulticurveQuote(createData);
+
+        (uint256 amountOut, uint256 gasEstimate) = v4Quoter.quoteExactInputSingle(
             IV4Quoter.QuoteExactSingleParams({
                 poolKey: poolKey, zeroForOne: zeroForOne, exactAmount: exactAmountIn, hookData: hookData
             })
         );
+        revert SimulationResult(abi.encode(asset, poolKey, amountOut, gasEstimate));
+    }
+
+    /// @dev Runs a simulation step and returns the result it reverted with; any other revert is passed on
+    function _simulate(bytes memory step) private returns (bytes memory result) {
+        (, bytes memory ret) = address(this).call(step);
+        if (ret.length >= 4 && bytes4(ret) == SimulationResult.selector) {
+            assembly ("memory-safe") {
+                let length := mload(ret)
+                ret := add(ret, 4)
+                mstore(ret, sub(length, 4))
+            }
+            return abi.decode(ret, (bytes));
+        }
+        assembly ("memory-safe") {
+            revert(add(ret, 32), mload(ret))
+        }
     }
 
     function _prepareMulticurveQuote(CreateParams calldata createData)
@@ -172,6 +244,8 @@ contract Bundler {
 
     /**
      * @notice Bundles the creation of an asset via the Airlock contract and a buy operation via the Universal Router
+     * @dev Only `msg.value` goes to the router, and only what this call left behind goes back to the caller: tokens or
+     *      ETH that were already in the Bundler are never spent or refunded (audit ATH-04).
      * @param createData Creation data to pass to the Airlock contract
      * @param commands Encoded commands for the Universal Router
      * @param inputs Encoded inputs for the Universal Router
@@ -181,17 +255,23 @@ contract Bundler {
         bytes calldata commands,
         bytes[] calldata inputs
     ) external payable {
+        address numeraire = createData.numeraire;
+        uint256 ethBefore = address(this).balance - msg.value;
+        uint256 numeraireBefore = SafeTransferLib.balanceOf(numeraire, address(this));
+
         (address asset,,,,) = airlock.create(createData);
-        uint256 balance = address(this).balance;
-        router.execute{ value: balance }(commands, inputs);
+        router.execute{ value: msg.value }(commands, inputs);
 
         uint256 ethBalance = address(this).balance;
-        if (ethBalance > 0) SafeTransferLib.safeTransferETH(msg.sender, ethBalance);
+        if (ethBalance > ethBefore) SafeTransferLib.safeTransferETH(msg.sender, ethBalance - ethBefore);
 
+        // The asset is created by this call, so all of it that the Bundler holds came from this call.
         uint256 assetBalance = SafeTransferLib.balanceOf(asset, address(this));
         if (assetBalance > 0) SafeTransferLib.safeTransfer(asset, msg.sender, assetBalance);
 
-        uint256 numeraireBalance = SafeTransferLib.balanceOf(createData.numeraire, address(this));
-        if (numeraireBalance > 0) SafeTransferLib.safeTransfer(createData.numeraire, msg.sender, numeraireBalance);
+        uint256 numeraireBalance = SafeTransferLib.balanceOf(numeraire, address(this));
+        if (numeraireBalance > numeraireBefore) {
+            SafeTransferLib.safeTransfer(numeraire, msg.sender, numeraireBalance - numeraireBefore);
+        }
     }
 }

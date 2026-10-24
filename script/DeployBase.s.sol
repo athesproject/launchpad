@@ -54,6 +54,11 @@ abstract contract DeployBase is Script, Config, Versions {
     function _deployContext() internal returns (DeployContext memory context) {
         uint256 chainId = block.chainid;
         require(config.exists(chainId, PROTOCOL_DEPLOYER_KEY), "protocol_deployer is not configured");
+        // A production chain needs an explicit go-ahead on top of its chain id (audit ATH-10).
+        require(
+            _isConfiguredTestnet(chainId) || vm.envOr("DOPPLER_PRODUCTION_DEPLOY", false),
+            "production chain: set DOPPLER_PRODUCTION_DEPLOY=true to deploy"
+        );
 
         context = DeployContext({
             chainId: chainId,

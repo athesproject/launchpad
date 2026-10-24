@@ -93,6 +93,6 @@ contract DeployAirlockScriptBaseSepolia is DeployAirlockScript {
 
 contract DeployAirlockScriptLitVM is DeployAirlockScript {
     function setUp() public override {
-        _loadConfigAndSelectFork(ChainIds.LITVM_MAINNET, false);
+        _loadConfigAndSelectFork(ChainIds.LITVM_TESTNET, true);
     }
 }

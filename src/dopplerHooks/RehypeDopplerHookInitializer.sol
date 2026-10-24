@@ -35,8 +35,10 @@ import {
     HookFees,
     InitData,
     InsufficientFeeCurrency,
+    InvalidAsset,
     InvalidDurationSeconds,
     InvalidFeeRange,
+    InvalidNumeraire,
     MAX_REBALANCE_ITERATIONS,
     MAX_SWAP_FEE,
     PoolAlreadyInitialized,
@@ -103,7 +105,12 @@ contract RehypeDopplerHookInitializer is BaseDopplerHookInitializer, FeesManager
         // Naive reinitialization would lead to overallocation of beneficiary fees and overlapping claims.
         require(getPoolInfo[poolId].asset == address(0), PoolAlreadyInitialized());
 
-        getPoolInfo[poolId] = PoolInfo({ asset: asset, numeraire: initData.numeraire, buybackDst: initData.buybackDst });
+        // The PoolKey is the source of truth: the asset must be one of its currencies and the numeraire the other.
+        // Ported from upstream Doppler ae638a9a (audit ATH-03).
+        address numeraire = _numeraireFromKey(asset, key);
+        require(initData.numeraire == numeraire, InvalidNumeraire(numeraire, initData.numeraire));
+
+        getPoolInfo[poolId] = PoolInfo({ asset: asset, numeraire: numeraire, buybackDst: initData.buybackDst });
 
         _validateFeeDistribution(initData.feeDistributionInfo);
         getFeeDistributionInfo[poolId] = initData.feeDistributionInfo;
@@ -791,6 +798,19 @@ contract RehypeDopplerHookInitializer is BaseDopplerHookInitializer, FeesManager
                 == WAD,
             FeeDistributionMustAddUpToWAD()
         );
+    }
+
+    /**
+     * @dev Returns the PoolKey currency paired with `asset`, reverting if `asset` is not one of the key's currencies
+     * @param asset Asset of the pool
+     * @param key Key of the pool
+     * @return The numeraire, as given by the key
+     */
+    function _numeraireFromKey(address asset, PoolKey calldata key) internal pure returns (address) {
+        Currency assetCurrency = Currency.wrap(asset);
+        if (key.currency0 == assetCurrency) return Currency.unwrap(key.currency1);
+        if (key.currency1 == assetCurrency) return Currency.unwrap(key.currency0);
+        revert InvalidAsset(asset);
     }
 
     /**

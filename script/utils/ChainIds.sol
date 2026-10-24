@@ -14,7 +14,8 @@ library ChainIds {
     uint256 constant MONAD_MAINNET = 143;
     uint256 constant MONAD_TESTNET = 10_143;
     uint256 constant ROBINHOOD_MAINNET = 4663;
-    uint256 constant LITVM_MAINNET = 4441;
+    /// @dev LitVM LiteForge, a testnet (audit ATH-10: it used to be named a mainnet here)
+    uint256 constant LITVM_TESTNET = 4441;
 }
 
 using LibString for uint256;

@@ -1,5 +1,13 @@
 ### Deployment
 
+> [!NOTE]
+> **LitVMSwap fork.** This page describes upstream Doppler's deployment process, including Whetstone's
+> **Deploy Contracts** GitHub Action and its deployer address; that workflow is not part of this repository. On
+> LitVM (chain 4441, testnet) contracts are deployed and administered only through the 2-of-3 Safe
+> `0x868b8B48db5DDE602D24960A606A5A8F93333bf9`, and no private key is ever passed on a command line. Local commands
+> below sign with an encrypted Foundry keystore: create it once with `cast wallet import deployer --interactive`,
+> then pass `--account deployer`.
+
 The supported top-level protocol deployment entry point is
 [`script/DeployDoppler.s.sol`](../script/DeployDoppler.s.sol). It deploys or reuses the versioned contracts
 controlled by [`script/utils/Versions.sol`](../script/utils/Versions.sol), writes deployment outputs back to
@@ -104,11 +112,11 @@ rpc_url: leave blank for chain-specific wrappers, or override if necessary
 Local equivalent:
 
 ```shell
-DEPLOYER_ADDRESS=$(cast wallet address --private-key "$DEPLOYER_PRIVATE_KEY")
+DEPLOYER_ADDRESS=$(cast wallet address --account deployer)
 
 forge script script/DeployDopplerCreateXDeployer.s.sol \
   --target-contract DeployDopplerCreateXDeployerScriptBaseSepolia \
-  --private-key "$DEPLOYER_PRIVATE_KEY" \
+  --account deployer \
   --sender "$DEPLOYER_ADDRESS" \
   --broadcast \
   --slow \
@@ -134,7 +142,7 @@ cast send <protocol_deployer> \
   "addDeployers(address[])" \
   "[0xcCe8c8461F91dCD4c1f99520b685648DF3462D4C]" \
   --rpc-url <target-rpc-url-or-alias> \
-  --private-key <deployer-owner-or-admin-private-key>
+  --account <deployer-owner-or-admin-keystore>
 ```
 
 #### Deploy The Protocol With GitHub Actions
@@ -185,11 +193,11 @@ Local execution is mainly for simulation and debugging. Use the same sender that
 Simulation:
 
 ```shell
-DEPLOYER_ADDRESS=$(cast wallet address --private-key "$DEPLOYER_PRIVATE_KEY")
+DEPLOYER_ADDRESS=$(cast wallet address --account deployer)
 
 forge script script/DeployDoppler.s.sol \
   --target-contract DeployDopplerScriptBaseSepolia \
-  --private-key "$DEPLOYER_PRIVATE_KEY" \
+  --account deployer \
   --sender "$DEPLOYER_ADDRESS" \
   --non-interactive \
   -vvv
@@ -198,11 +206,11 @@ forge script script/DeployDoppler.s.sol \
 Broadcast:
 
 ```shell
-DEPLOYER_ADDRESS=$(cast wallet address --private-key "$DEPLOYER_PRIVATE_KEY")
+DEPLOYER_ADDRESS=$(cast wallet address --account deployer)
 
 forge script script/DeployDoppler.s.sol \
   --target-contract DeployDopplerScriptBaseSepolia \
-  --private-key "$DEPLOYER_PRIVATE_KEY" \
+  --account deployer \
   --sender "$DEPLOYER_ADDRESS" \
   --broadcast \
   --slow \

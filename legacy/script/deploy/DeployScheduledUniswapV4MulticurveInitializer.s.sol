@@ -80,7 +80,7 @@ struct ScriptData {
     address create2Factory;
 }
 
-/// @dev forge script DeployUniswapV4ScheduledMulticurveInitializerBaseScript --private-key $PRIVATE_KEY --verify --slow --broadcast --rpc-url $BASE_MAINNET_RPC_URL
+/// @dev forge script DeployUniswapV4ScheduledMulticurveInitializerBaseScript --account deployer --verify --slow --broadcast --rpc-url $BASE_MAINNET_RPC_URL
 contract DeployUniswapV4ScheduledMulticurveInitializerBaseScript is
     DeployUniswapV4ScheduledMulticurveInitializerScript
 {
@@ -93,7 +93,7 @@ contract DeployUniswapV4ScheduledMulticurveInitializerBaseScript is
     }
 }
 
-/// @dev forge script DeployUniswapV4ScheduledMulticurveInitializerBaseSepoliaScript --private-key $PRIVATE_KEY --verify --slow --broadcast --rpc-url $BASE_SEPOLIA_RPC_URL
+/// @dev forge script DeployUniswapV4ScheduledMulticurveInitializerBaseSepoliaScript --account deployer --verify --slow --broadcast --rpc-url $BASE_SEPOLIA_RPC_URL
 contract DeployUniswapV4ScheduledMulticurveInitializerBaseSepoliaScript is
     DeployUniswapV4ScheduledMulticurveInitializerScript
 {
@@ -106,7 +106,7 @@ contract DeployUniswapV4ScheduledMulticurveInitializerBaseSepoliaScript is
     }
 }
 
-/// @dev forge script DeployUniswapV4ScheduledMulticurveInitializerUnichainScript --private-key $PRIVATE_KEY --verify --slow --broadcast --rpc-url $UNICHAIN_MAINNET_RPC_URL
+/// @dev forge script DeployUniswapV4ScheduledMulticurveInitializerUnichainScript --account deployer --verify --slow --broadcast --rpc-url $UNICHAIN_MAINNET_RPC_URL
 contract DeployUniswapV4ScheduledMulticurveInitializerUnichainScript is
     DeployUniswapV4ScheduledMulticurveInitializerScript
 {
@@ -119,7 +119,7 @@ contract DeployUniswapV4ScheduledMulticurveInitializerUnichainScript is
     }
 }
 
-/// @dev forge script DeployUniswapV4ScheduledMulticurveInitializerUnichainSepoliaScript --private-key $PRIVATE_KEY --verify --slow --broadcast --rpc-url $UNICHAIN_SEPOLIA_RPC_URL
+/// @dev forge script DeployUniswapV4ScheduledMulticurveInitializerUnichainSepoliaScript --account deployer --verify --slow --broadcast --rpc-url $UNICHAIN_SEPOLIA_RPC_URL
 contract DeployUniswapV4ScheduledMulticurveInitializerUnichainSepoliaScript is
     DeployUniswapV4ScheduledMulticurveInitializerScript
 {
@@ -132,7 +132,7 @@ contract DeployUniswapV4ScheduledMulticurveInitializerUnichainSepoliaScript is
     }
 }
 
-/// @dev forge script DeployUniswapV4ScheduledMulticurveInitializerMainnetScript --private-key $PRIVATE_KEY --verify --slow --broadcast --rpc-url $ETH_MAINNET_RPC_URL
+/// @dev forge script DeployUniswapV4ScheduledMulticurveInitializerMainnetScript --account deployer --verify --slow --broadcast --rpc-url $ETH_MAINNET_RPC_URL
 contract DeployUniswapV4ScheduledMulticurveInitializerMainnetScript is
     DeployUniswapV4ScheduledMulticurveInitializerScript
 {
@@ -145,7 +145,7 @@ contract DeployUniswapV4ScheduledMulticurveInitializerMainnetScript is
     }
 }
 
-/// @dev forge script DeployUniswapV4ScheduledMulticurveInitializerSepoliaScript --private-key $PRIVATE_KEY --verify --slow --broadcast --rpc-url $ETH_SEPOLIA_RPC_URL
+/// @dev forge script DeployUniswapV4ScheduledMulticurveInitializerSepoliaScript --account deployer --verify --slow --broadcast --rpc-url $ETH_SEPOLIA_RPC_URL
 contract DeployUniswapV4ScheduledMulticurveInitializerSepoliaScript is
     DeployUniswapV4ScheduledMulticurveInitializerScript
 {

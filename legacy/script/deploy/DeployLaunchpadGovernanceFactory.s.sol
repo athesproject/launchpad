@@ -22,28 +22,28 @@ abstract contract DeployLaunchpadGovernanceFactoryScript is Script {
     }
 }
 
-/// @dev forge script DeployLaunchpadGovernanceFactoryEthereumMainnetScript --private-key $PRIVATE_KEY --broadcast --slow --verify --rpc-url $ETH_MAINNET_RPC_URL
+/// @dev forge script DeployLaunchpadGovernanceFactoryEthereumMainnetScript --account deployer --broadcast --slow --verify --rpc-url $ETH_MAINNET_RPC_URL
 contract DeployLaunchpadGovernanceFactoryEthereumMainnetScript is DeployLaunchpadGovernanceFactoryScript {
     function setUp() public override {
         _scriptData = ScriptData({ chainId: ChainIds.ETH_MAINNET });
     }
 }
 
-/// @dev forge script DeployLaunchpadGovernanceFactoryBaseScript --private-key $PRIVATE_KEY --broadcast --slow --verify --rpc-url $BASE_MAINNET_RPC_URL
+/// @dev forge script DeployLaunchpadGovernanceFactoryBaseScript --account deployer --broadcast --slow --verify --rpc-url $BASE_MAINNET_RPC_URL
 contract DeployLaunchpadGovernanceFactoryBaseScript is DeployLaunchpadGovernanceFactoryScript {
     function setUp() public override {
         _scriptData = ScriptData({ chainId: ChainIds.BASE_MAINNET });
     }
 }
 
-/// @dev forge script DeployLaunchpadGovernanceFactoryBaseSepoliaScript --private-key $PRIVATE_KEY --broadcast --slow --verify --rpc-url $BASE_SEPOLIA_RPC_URL
+/// @dev forge script DeployLaunchpadGovernanceFactoryBaseSepoliaScript --account deployer --broadcast --slow --verify --rpc-url $BASE_SEPOLIA_RPC_URL
 contract DeployLaunchpadGovernanceFactoryBaseSepoliaScript is DeployLaunchpadGovernanceFactoryScript {
     function setUp() public override {
         _scriptData = ScriptData({ chainId: ChainIds.BASE_SEPOLIA });
     }
 }
 
-/// @dev forge script DeployLaunchpadGovernanceFactoryMonadTestnetScript --private-key $PRIVATE_KEY --broadcast --slow --verify --rpc-url $MONAD_TESTNET_RPC_URL
+/// @dev forge script DeployLaunchpadGovernanceFactoryMonadTestnetScript --account deployer --broadcast --slow --verify --rpc-url $MONAD_TESTNET_RPC_URL
 contract DeployLaunchpadGovernanceFactoryMonadTestnetScript is DeployLaunchpadGovernanceFactoryScript {
     function setUp() public override {
         _scriptData = ScriptData({ chainId: ChainIds.MONAD_TESTNET });

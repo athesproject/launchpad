@@ -55,7 +55,7 @@ abstract contract DeployUniswapV4MulticurveInitializerScript is Script {
     }
 }
 
-/// @dev forge script DeployUniswapV4MulticurveInitializerBaseScript --private-key $PRIVATE_KEY --verify --slow --broadcast --rpc-url $BASE_MAINNET_RPC_URL
+/// @dev forge script DeployUniswapV4MulticurveInitializerBaseScript --account deployer --verify --slow --broadcast --rpc-url $BASE_MAINNET_RPC_URL
 contract DeployUniswapV4MulticurveInitializerBaseScript is DeployUniswapV4MulticurveInitializerScript {
     function setUp() public override {
         _scriptData = ScriptData({
@@ -66,7 +66,7 @@ contract DeployUniswapV4MulticurveInitializerBaseScript is DeployUniswapV4Multic
     }
 }
 
-/// @dev forge script DeployUniswapV4MulticurveInitializerBaseSepoliaScript --private-key $PRIVATE_KEY --verify --slow --broadcast --rpc-url $BASE_SEPOLIA_RPC_URL
+/// @dev forge script DeployUniswapV4MulticurveInitializerBaseSepoliaScript --account deployer --verify --slow --broadcast --rpc-url $BASE_SEPOLIA_RPC_URL
 contract DeployUniswapV4MulticurveInitializerBaseSepoliaScript is DeployUniswapV4MulticurveInitializerScript {
     function setUp() public override {
         _scriptData = ScriptData({
@@ -77,7 +77,7 @@ contract DeployUniswapV4MulticurveInitializerBaseSepoliaScript is DeployUniswapV
     }
 }
 
-/// @dev forge script DeployUniswapV4MulticurveInitializerUnichainScript --private-key $PRIVATE_KEY --verify --slow --broadcast --rpc-url $UNICHAIN_MAINNET_RPC_URL
+/// @dev forge script DeployUniswapV4MulticurveInitializerUnichainScript --account deployer --verify --slow --broadcast --rpc-url $UNICHAIN_MAINNET_RPC_URL
 contract DeployUniswapV4MulticurveInitializerUnichainScript is DeployUniswapV4MulticurveInitializerScript {
     function setUp() public override {
         _scriptData = ScriptData({
@@ -88,7 +88,7 @@ contract DeployUniswapV4MulticurveInitializerUnichainScript is DeployUniswapV4Mu
     }
 }
 
-/// @dev forge script DeployUniswapV4MulticurveInitializerUnichainSepoliaScript --private-key $PRIVATE_KEY --verify --slow --broadcast --rpc-url $UNICHAIN_SEPOLIA_RPC_URL
+/// @dev forge script DeployUniswapV4MulticurveInitializerUnichainSepoliaScript --account deployer --verify --slow --broadcast --rpc-url $UNICHAIN_SEPOLIA_RPC_URL
 contract DeployUniswapV4MulticurveInitializerUnichainSepoliaScript is DeployUniswapV4MulticurveInitializerScript {
     function setUp() public override {
         _scriptData = ScriptData({
@@ -99,7 +99,7 @@ contract DeployUniswapV4MulticurveInitializerUnichainSepoliaScript is DeployUnis
     }
 }
 
-/// @dev forge script DeployUniswapV4MulticurveInitializerMonadTestnetScript --private-key $PRIVATE_KEY --verify --slow --broadcast --rpc-url $MONAD_TESTNET_RPC_URL
+/// @dev forge script DeployUniswapV4MulticurveInitializerMonadTestnetScript --account deployer --verify --slow --broadcast --rpc-url $MONAD_TESTNET_RPC_URL
 contract DeployUniswapV4MulticurveInitializerMonadTestnetScript is DeployUniswapV4MulticurveInitializerScript {
     function setUp() public override {
         _scriptData = ScriptData({

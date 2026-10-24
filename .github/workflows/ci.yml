@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: LitVM fork tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          submodules: recursive
+          persist-credentials: false
+
+      - name: Supply-chain policy (pinned actions and submodules, exact versions, official registry, no install scripts)
+        run: python3 .github/policy.py .
+
+      - uses: foundry-rs/foundry-toolchain@908c540300062bd5a7e473851cdb4282204cee09 # v1.9.1
+        with:
+          version: v1.5.1
+
+      # A full via-IR build of every Doppler module and test takes hours; sparse mode compiles only what these
+      # suites need. They cover the LitVMSwap changes and every Rehype and Bundler unit test (no RPC, no secrets).
+      - name: Unit tests for the LitVMSwap changes
+        env:
+          FOUNDRY_SPARSE_MODE: "true"
+        run: >
+          forge test -vv --match-path
+          "test/unit/{BundlerIsolation,LitVMDeploymentConfig,dopplerHooks/rehypeHookInitializer/*,dopplerHooks/rehypeHookMigrator/*}.t.sol"
+
+      # The 11 contracts deployed on LitVM (deployments/4441.md), compared byte for byte with the chain.
+      - name: The build is the code running on LitVM (read-only RPC)
+        run: |
+          forge build src/DopplerCreateXDeployer.sol src/Airlock.sol src/tokens/DopplerERC20V1Factory.sol \
+            src/tokens/DopplerERC20V1.sol src/lockers/StreamableFeesLockerV2.sol src/TopUpDistributor.sol \
+            src/governance/NoOpGovernanceFactory.sol src/migrators/NoOpMigrator.sol \
+            src/initializers/LockableUniswapV3Initializer.sol src/migrators/UniswapV2MigratorSplit.sol \
+            src/lockers/UniswapV2Locker.sol
+          node scripts/verify-deployed.js

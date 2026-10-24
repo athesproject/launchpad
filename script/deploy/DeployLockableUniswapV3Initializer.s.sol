@@ -100,6 +100,6 @@ contract DeployLockableUniswapV3InitializerScriptBaseSepolia is DeployLockableUn
 
 contract DeployLockableUniswapV3InitializerScriptLitVM is DeployLockableUniswapV3InitializerScript {
     function setUp() public override {
-        _loadConfigAndSelectFork(ChainIds.LITVM_MAINNET, false);
+        _loadConfigAndSelectFork(ChainIds.LITVM_TESTNET, true);
     }
 }

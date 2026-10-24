@@ -105,7 +105,7 @@ contract DeployDopplerCreateXDeployerScriptBaseSepolia is DeployDopplerCreateXDe
 
 contract DeployDopplerCreateXDeployerScriptLitVM is DeployDopplerCreateXDeployerScript {
     function setUp() public override {
-        _loadConfigAndSelectFork(ChainIds.LITVM_MAINNET, false);
+        _loadConfigAndSelectFork(ChainIds.LITVM_TESTNET, true);
         salt = hex"c4b2a8d3e1f07722998855000000000000000000000000000000000000000000";
         address broadcaster = _resolveBroadcastSender();
         bytes memory initCode = _initCode(config.get(block.chainid, "deployer_owner").toAddress());

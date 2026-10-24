@@ -5,7 +5,8 @@ forge-std/=lib/forge-std/src/
 hardhat/=lib/v4-core/node_modules/hardhat/
 permit2/=lib/v4-periphery/lib/permit2/
 
-@solmate/=lib/v4-core/lib/solmate/src
+@solmate/=lib/solmate/src/
+solmate/=lib/solmate/
 @solady/=lib/solady/src/
 @openzeppelin/=lib/v4-core/lib/openzeppelin-contracts/contracts/
 lib/v4-core/:@openzeppelin/=lib/v4-core/lib/openzeppelin-contracts/

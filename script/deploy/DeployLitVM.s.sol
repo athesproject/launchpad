@@ -17,7 +17,9 @@ import { DeployTopUpDistributor } from "script/deploy/DeployTopUpDistributor.s.s
 /// @notice Full deployment script for LitVM (chainId 4441)
 /// @dev LitVM only has Uniswap V2 + V3. We use LockableUniswapV3Initializer instead of V4 hooks.
 /// @dev Step 1: First deploy DopplerCreateXDeployer via DeployDopplerCreateXDeployer.s.sol, then run this script.
-/// @dev Run with: forge script script/deploy/DeployLitVM.s.sol:DeployLitVMScript --rpc-url litvm --broadcast --private-key $DEPLOYER_PRIVATE_KEY
+/// @dev LitVMSwap deploys and administers on LitVM only through the 2-of-3 Safe (CreateCall); a local run signs
+///      with an encrypted keystore, never a key on the command line:
+///      forge script script/deploy/DeployLitVM.s.sol:DeployLitVMScript --rpc-url litvm --broadcast --account deployer
 contract DeployLitVMScript is
     DeployAirlock,
     DeployDopplerERC20V1Factory,
@@ -29,7 +31,7 @@ contract DeployLitVMScript is
     DeployTopUpDistributor
 {
     function setUp() public {
-        _loadConfigAndSelectFork(ChainIds.LITVM_MAINNET, false);
+        _loadConfigAndSelectFork(ChainIds.LITVM_TESTNET, true);
     }
 
     function run() public {

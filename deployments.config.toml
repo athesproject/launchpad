@@ -218,14 +218,14 @@ weth = "0x4200000000000000000000000000000000000006"
 endpoint_url = "${LITVM_RPC_URL}"
 
 [4441.bool]
-is_testnet = false
+is_testnet = true
 
 [4441.address]
 airlock = "0x803CDD17e0be6652f407fe39e6779b93cfAb1c19"
-airlock_multisig = "0x23D542DCEFb00b1f4268E67a0EC1EF4de0A58fe2"
+airlock_multisig = "0x868b8B48db5DDE602D24960A606A5A8F93333bf9"
 create2_factory = "0x4e59b44847b379578588920cA78FbF26c0B4956C"
 create_x = "0xba5Ed099633D3B313e4D5F7bdc1305d3c28ba5Ed"
-deployer_owner = "0x23D542DCEFb00b1f4268E67a0EC1EF4de0A58fe2"
+deployer_owner = "0x868b8B48db5DDE602D24960A606A5A8F93333bf9"
 doppler_deployer = "0x03ba4f49a34d07d0772d5dec8110458c639a6d9f"
 doppler_erc20_v1_factory = "0x2FACc7E98ec3181aef5381418840C2525777EbDd"
 doppler_erc20_v1_implementation = "0x97550629019657b8D1A841547dd5604865E51Ec5"

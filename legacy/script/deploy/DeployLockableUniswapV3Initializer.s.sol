@@ -41,7 +41,7 @@ abstract contract DeployLockableUniswapV3InitializerScript is Script, Config {
     }
 }
 
-/// @dev forge script DeployLockableUniswapV3InitializerEthereumMainnet --private-key $PRIVATE_KEY --verify --slow --broadcast
+/// @dev forge script DeployLockableUniswapV3InitializerEthereumMainnet --account deployer --verify --slow --broadcast
 contract DeployLockableUniswapV3InitializerEthereumMainnet is DeployLockableUniswapV3InitializerScript {
     function setUp() public override {
         super.setUp();
@@ -54,7 +54,7 @@ contract DeployLockableUniswapV3InitializerEthereumMainnet is DeployLockableUnis
     }
 }
 
-/// @dev forge script DeployLockableUniswapV3InitializerBaseSepolia --private-key $PRIVATE_KEY --verify --slow --broadcast
+/// @dev forge script DeployLockableUniswapV3InitializerBaseSepolia --account deployer --verify --slow --broadcast
 contract DeployLockableUniswapV3InitializerBaseSepolia is DeployLockableUniswapV3InitializerScript {
     function setUp() public override {
         super.setUp();
@@ -67,7 +67,7 @@ contract DeployLockableUniswapV3InitializerBaseSepolia is DeployLockableUniswapV
     }
 }
 
-/// @dev forge script DeployLockableUniswapV3InitializerBase --private-key $PRIVATE_KEY --verify --slow --broadcast
+/// @dev forge script DeployLockableUniswapV3InitializerBase --account deployer --verify --slow --broadcast
 contract DeployLockableUniswapV3InitializerBase is DeployLockableUniswapV3InitializerScript {
     function setUp() public override {
         super.setUp();
@@ -80,7 +80,7 @@ contract DeployLockableUniswapV3InitializerBase is DeployLockableUniswapV3Initia
     }
 }
 
-/// @dev forge script DeployLockableUniswapV3InitializerUnichainSepolia --private-key $PRIVATE_KEY --verify --slow --broadcast
+/// @dev forge script DeployLockableUniswapV3InitializerUnichainSepolia --account deployer --verify --slow --broadcast
 contract DeployLockableUniswapV3InitializerUnichainSepolia is DeployLockableUniswapV3InitializerScript {
     function setUp() public override {
         super.setUp();
@@ -93,7 +93,7 @@ contract DeployLockableUniswapV3InitializerUnichainSepolia is DeployLockableUnis
     }
 }
 
-/// @dev forge script DeployLockableUniswapV3InitializerUnichain --private-key $PRIVATE_KEY --verify --slow --broadcast
+/// @dev forge script DeployLockableUniswapV3InitializerUnichain --account deployer --verify --slow --broadcast
 contract DeployLockableUniswapV3InitializerUnichain is DeployLockableUniswapV3InitializerScript {
     function setUp() public override {
         super.setUp();
@@ -106,7 +106,7 @@ contract DeployLockableUniswapV3InitializerUnichain is DeployLockableUniswapV3In
     }
 }
 
-/// @dev forge script DeployLockableUniswapV3InitializerMonad --private-key $PRIVATE_KEY --verify --slow --broadcast
+/// @dev forge script DeployLockableUniswapV3InitializerMonad --account deployer --verify --slow --broadcast
 contract DeployLockableUniswapV3InitializerMonad is DeployLockableUniswapV3InitializerScript {
     function setUp() public override {
         super.setUp();

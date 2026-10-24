@@ -66,7 +66,7 @@ contract TestLaunchScript is Script {
             salt: keccak256(abi.encodePacked("test-token-salt-2"))
         });
 
-        vm.startBroadcast(0x23D542DCEFb00b1f4268E67a0EC1EF4de0A58fe2);
+        vm.startBroadcast(); // the --account / --sender given to forge script
         (address asset, address pool, address gov, address timelock, address migPool) = airlock.create(params);
         console.log("Token Created:", asset);
         console.log("V3 Pool:", pool);

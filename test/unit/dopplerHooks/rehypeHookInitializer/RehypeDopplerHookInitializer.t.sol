@@ -371,6 +371,10 @@ contract RehypeDopplerHookInitializerTest is Deployers {
         poolKey.hooks = IHooks(address(dopplerHook));
         address asset = makeAddr("asset");
         address numeraire = makeAddr("numeraire");
+        // The key must hold the pool's own asset and numeraire (InvalidAsset / InvalidNumeraire, audit ATH-03).
+        (poolKey.currency0, poolKey.currency1) = asset < numeraire
+            ? (Currency.wrap(asset), Currency.wrap(numeraire))
+            : (Currency.wrap(numeraire), Currency.wrap(asset));
         address buybackDst = makeAddr("buybackDst");
         uint96 initialOwnerShares = uint96(0.05e18);
         InitData memory initialData = _beneficiaryOnlyInitData(numeraire, buybackDst, 3000, 3000, 0, 0);

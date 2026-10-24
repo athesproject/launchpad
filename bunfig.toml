@@ -1,0 +1,5 @@
+# Supply-chain hardening (LitVM team audit ATH-06): official registry, exact versions. Bun runs no dependency
+# lifecycle scripts unless a package is listed in trustedDependencies (none are).
+[install]
+registry = "https://registry.npmjs.org"
+exact = true

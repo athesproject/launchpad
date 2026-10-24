@@ -36,7 +36,7 @@ abstract contract DeployV4Script is Script {
     }
 }
 
-/// @dev forge script DeployV4BaseScript --private-key $PRIVATE_KEY --verify --rpc-url $BASE_MAINNET_RPC_URL --slow --broadcast
+/// @dev forge script DeployV4BaseScript --account deployer --verify --rpc-url $BASE_MAINNET_RPC_URL --slow --broadcast
 contract DeployV4BaseScript is DeployV4Script {
     function setUp() public override {
         _scriptData = V4ScriptData({
@@ -48,7 +48,7 @@ contract DeployV4BaseScript is DeployV4Script {
     }
 }
 
-/// @dev forge script DeployV4BaseSepoliaScript --private-key $PRIVATE_KEY --verify --rpc-url $BASE_SEPOLIA_RPC_URL --slow --broadcast
+/// @dev forge script DeployV4BaseSepoliaScript --account deployer --verify --rpc-url $BASE_SEPOLIA_RPC_URL --slow --broadcast
 contract DeployV4BaseSepoliaScript is DeployV4Script {
     function setUp() public override {
         _scriptData = V4ScriptData({
@@ -71,7 +71,7 @@ contract DeployV4InkScript is DeployV4Script {
     }
 }
 
-/// @dev forge script DeployV4UnichainScript --private-key $PRIVATE_KEY --verify --rpc-url $UNICHAIN_MAINNET_RPC_URL --slow --broadcast
+/// @dev forge script DeployV4UnichainScript --account deployer --verify --rpc-url $UNICHAIN_MAINNET_RPC_URL --slow --broadcast
 contract DeployV4UnichainScript is DeployV4Script {
     function setUp() public override {
         _scriptData = V4ScriptData({
@@ -83,7 +83,7 @@ contract DeployV4UnichainScript is DeployV4Script {
     }
 }
 
-/// @dev forge script DeployV4UnichainSepoliaScript --private-key $PRIVATE_KEY --verify --rpc-url $UNICHAIN_SEPOLIA_RPC_URL --slow --broadcast
+/// @dev forge script DeployV4UnichainSepoliaScript --account deployer --verify --rpc-url $UNICHAIN_SEPOLIA_RPC_URL --slow --broadcast
 contract DeployV4UnichainSepoliaScript is DeployV4Script {
     function setUp() public override {
         _scriptData = V4ScriptData({
@@ -95,7 +95,7 @@ contract DeployV4UnichainSepoliaScript is DeployV4Script {
     }
 }
 
-/// @dev forge script DeployV4MonadTestnetScript --private-key $PRIVATE_KEY --verify --rpc-url $MONAD_TESTNET_RPC_URL --slow --broadcast
+/// @dev forge script DeployV4MonadTestnetScript --account deployer --verify --rpc-url $MONAD_TESTNET_RPC_URL --slow --broadcast
 contract DeployV4MonadTestnetScript is DeployV4Script {
     function setUp() public override {
         _scriptData = V4ScriptData({

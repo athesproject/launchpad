@@ -1,12 +1,38 @@
-# Doppler
+# launchpad (Doppler on LitVM)
 
-[![Test](https://github.com/whetstoneresearch/doppler/actions/workflows/test.yml/badge.svg)](https://github.com/whetstoneresearch/doppler/actions/workflows/test.yml)
-[![GitBook - Documentation](https://img.shields.io/badge/GitBook-Documentation-pink?logo=gitbook&logoColor=white)](https://docs.doppler.lol)
-[![Foundry][foundry-badge]][foundry]
-[![License: BUSL 1.1](https://img.shields.io/badge/License-BUSL%201.1-blue.svg)](https://github.com/whetstoneresearch/doppler/blob/main/LICENSE)
+[![CI](https://github.com/athesproject/launchpad/actions/workflows/ci.yml/badge.svg)](https://github.com/athesproject/launchpad/actions/workflows/ci.yml)
+[![License: BUSL 1.1](https://img.shields.io/badge/License-BUSL%201.1-blue.svg)](./LICENSE)
 
-[foundry]: https://getfoundry.sh/
-[foundry-badge]: https://img.shields.io/badge/Built%20with-Foundry-FFDB1C.svg
+LitVMSwap's token launchpad: Doppler by Whetstone Research, deployed on LitVM with Uniswap V2 and V3 (LitVM has no
+Uniswap V4).
+
+## LitVMSwap fork
+
+| | |
+|---|---|
+| Upstream | [whetstoneresearch/doppler](https://github.com/whetstoneresearch/doppler), base commit `0c55dfe2a8beaa2aef00ea18c2573ee46b0f0a7f` (14 Aug 2026); `src/`, `test/` and `package.json` were identical to it. Upstream HEAD checked on 2026-10-24: `5754c7e` |
+| Deployed on LitVM | the 11 contracts in [deployments/4441.md](deployments/4441.md); owners are the LitVM 2-of-3 Safe `0x868b8B48db5DDE602D24960A606A5A8F93333bf9` |
+| Not deployed on LitVM | everything that needs Uniswap V4: the Doppler V4 hooks, `RehypeDopplerHookInitializer`, `RehypeDopplerHookMigrator`, `Bundler` |
+| Local changes | LitVM deploy script and config (`script/deploy/DeployLitVM.s.sol`, `deployments.config.toml` `[4441]`, a testnet); `lib/v3-periphery` vendored with a Solidity 0.8 `uint160` cast in `PoolAddress.sol`; the security fixes below |
+| License | BUSL-1.1 (Whetstone Research), see [LICENSE](LICENSE); our additions in new files are MIT |
+
+Changes on top of the base (LitVM team audit, October 2026), none of which touch a contract deployed on LitVM:
+
+- `RehypeDopplerHookInitializer`: the numeraire is taken from the PoolKey and a mismatch reverts, ported from upstream
+  `ae638a9a`.
+- `Bundler`: forwards exactly `msg.value` and refunds only what the call left behind; the `simulate*` functions run in a
+  self-call that always reverts, so nothing persists if one is sent as a transaction (`test/unit/BundlerIsolation.t.sol`).
+- Deploy scripts: LitVM is a testnet, production chains need `DOPPLER_PRODUCTION_DEPLOY=true`, and no instruction passes
+  a key on the command line.
+- Dependencies: submodules pinned to the tested commits over HTTPS; solmate is pinned at the top level (`lib/solmate`,
+  `89365b8`) because the LitVM deployment was built with it, while the copy inside `lib/v4-core` is an older commit.
+  `viem` and `bun-types` at exact versions from the npm registry, no install scripts. CI runs the unit tests for
+  these changes, `.github/policy.py` (which enforces the pinning) and `scripts/verify-deployed.js`, which builds the
+  11 contracts deployed on LitVM and compares them byte for byte with the chain.
+
+Report security issues as described in [SECURITY.md](SECURITY.md).
+
+## Upstream documentation
 
 This repository contains the [Doppler](docs/Doppler.md) Protocol along with the [Airlock](/docs/Airlock.md) contracts. You can learn more about the technical aspects in the [documentation](https://docs.doppler.lol).
 
@@ -21,8 +47,8 @@ Latest deployments can be found [here](./Deployments.md), which is a mirror of t
 First, you will need to install [Foundry](https://book.getfoundry.sh/getting-started/installation) if you don't already have it. Then, run the following commands:
 
 ```shell
-# Clone the repository
-$ git clone git@github.com:whetstoneresearch/doppler.git
+# Clone the repository with its pinned submodules
+$ git clone --recursive https://github.com/athesproject/launchpad.git
 
 # Install the dependencies
 $ make install
