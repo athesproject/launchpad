@@ -20,6 +20,8 @@ Changes on top of the base (LitVM team audit, October 2026), none of which touch
 
 - `RehypeDopplerHookInitializer`: the numeraire is taken from the PoolKey and a mismatch reverts, ported from upstream
   `ae638a9a`.
+- `RehypeDopplerHookMigrator`: the same check, the numeraire is taken from the PoolKey and a mismatch or an asset
+  outside the key reverts (`test/unit/dopplerHooks/rehypeHookMigrator/RehypeMigratorPoolKeyIdentity.t.sol`).
 - `Bundler`: forwards exactly `msg.value` and refunds only what the call left behind; the `simulate*` functions run in a
   self-call that always reverts, so nothing persists if one is sent as a transaction (`test/unit/BundlerIsolation.t.sol`).
 - Deploy scripts: LitVM is a testnet, production chains need `DOPPLER_PRODUCTION_DEPLOY=true`, and no instruction passes

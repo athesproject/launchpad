@@ -26,6 +26,8 @@ import {
     FeeRoutingMode,
     HookFees,
     InsufficientFeeCurrency,
+    InvalidAsset,
+    InvalidNumeraire,
     MAX_REBALANCE_ITERATIONS,
     MigratorInitData,
     PoolInfo,
@@ -85,7 +87,12 @@ contract RehypeDopplerHookMigrator is BaseDopplerHookMigrator, ReentrancyGuard {
 
         PoolId poolId = key.toId();
 
-        getPoolInfo[poolId] = PoolInfo({ asset: asset, numeraire: initData.numeraire, buybackDst: initData.buybackDst });
+        // The numeraire is the PoolKey currency paired with the asset, as in RehypeDopplerHookInitializer
+        // (audit ATH-01).
+        address numeraire = _numeraireFromKey(asset, key);
+        require(initData.numeraire == numeraire, InvalidNumeraire(numeraire, initData.numeraire));
+
+        getPoolInfo[poolId] = PoolInfo({ asset: asset, numeraire: numeraire, buybackDst: initData.buybackDst });
 
         _validateFeeDistribution(initData.feeDistributionInfo);
         getFeeDistributionInfo[poolId] = initData.feeDistributionInfo;
@@ -704,6 +711,19 @@ contract RehypeDopplerHookMigrator is BaseDopplerHookMigrator, ReentrancyGuard {
                 == WAD,
             FeeDistributionMustAddUpToWAD()
         );
+    }
+
+    /**
+     * @dev Returns the PoolKey currency paired with `asset`, reverting if `asset` is not one of the key's currencies
+     * @param asset Asset of the pool
+     * @param key Key of the pool
+     * @return The numeraire, as given by the key
+     */
+    function _numeraireFromKey(address asset, PoolKey calldata key) internal pure returns (address) {
+        Currency assetCurrency = Currency.wrap(asset);
+        if (key.currency0 == assetCurrency) return Currency.unwrap(key.currency1);
+        if (key.currency1 == assetCurrency) return Currency.unwrap(key.currency0);
+        revert InvalidAsset(asset);
     }
 
     /**
